@@ -8,9 +8,10 @@ const formSearch = document.querySelector('.form-search'),
 
 // Данные
 
-const citiesApi = 'database/airports.json',
+const citiesApi = 'database/cities.json',
     proxy = 'http://cors-anywhere.herokuapp.com/',
-    API_KEY = '6a199d62c022e3c3150f87530e952f7f';
+    API_KEY = '6a199d62c022e3c3150f87530e952f7f',
+    calendar = 'http://min-prices.aviasales.ru/calendar_preload';
 
 let city = [];
 
@@ -57,7 +58,26 @@ const selectCity = (event, input, list) => {
         input.value = target.textContent;
         list.textContent = '';
     }
-}
+};
+
+const renderCheapDay = (cheapTicket) => {
+    console.log(cheapTicket);
+};
+
+const renderCheapYear = (cheapTickets) => {
+    console.log(cheapTiсkets);
+};
+
+const renderCheap = (data, date) => {
+    const cheapTicketYear = JSON.parse(data).best_prices;
+    
+    const cheapTicketDay = cheapTicketYear.filter((item) => {
+       return item.depart_date === date;
+    });
+
+    renderCheapDay(cheapTicketDay);
+    renderCheapYear(cheapTicketYear);
+};
 
 // Обработчики событиый
 
@@ -77,8 +97,33 @@ dropdownCitiesTo.addEventListener('click', (event) => {
     selectCity(event, inputCitiesTo, dropdownCitiesTo);
 });
 
+formSearch.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const cityFrom = city.find((item) => {
+        return inputCitiesFrom.value === item.name
+    });
+    const cityTo = city.find((item) => {
+        return inputCitiesTo.value === item.name
+    });
+
+    const formData = {
+        from: cityFrom.code,
+        to: cityTo.code,
+        when: inputDateDepart.value,
+    };
+
+    const requestData = `?depart_date=${formData.when}&origin=${formData.From}` +
+    `&destitination=${formData.to}&one_way=true`;
+
+    getData(calendar + requestData, (response) => {
+        renderCheap(response, formData.when);
+    });
+});
+
 // Вызовы функций 
 
 getData(citiesApi, (data) => {
     city = JSON.parse(data).filter((item)=> item.name);
 });
+
