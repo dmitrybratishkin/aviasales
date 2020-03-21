@@ -11,6 +11,8 @@ const formSearch = document.querySelector('.form-search'),
 
 // Данные
 
+let city = [];  
+
 const citiesApi = 'database/cities.json',
   proxy = 'https://cors-anywhere.herokuapp.com/',
   APY_KEY = '6a199d62c022e3c3150f87530e952f7f',
